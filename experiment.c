@@ -1,12 +1,12 @@
+
 #include <stdio.h>
+void walk(int *locx){
+	(*locx)++;
+}
 
 int main(void){
-	char bla[2][2] = {'B','L','V','W'}, x,y;
-	for ( x=-1;x<3;x++){//cyle through rows
-			for ( y=-1;y<3;y++) {//cycle through cells
-	printf("%c ",bla[x][y]);
-	}
-	printf("\n");
-	}
+	static int x = 0, stepx = 0;
+	walk(&stepx);
+	printf("%d",stepx);
 	return 0;
 }
