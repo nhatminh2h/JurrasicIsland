@@ -13,7 +13,6 @@
 #define NUMROWS	    9		/* Map size */
 #define NUMCOLS     9
 #define NUMWALKS    1000	/* Number of random walks */
-#define B 			
 /* enter any other #defines as you deem necessary below */
 
 
@@ -31,28 +30,28 @@ int main(void) {
 		{'W','L','L','L','D','L','L','L','W'},
 		{'B','B','W','B','W','B','B','W','B'}
 	};
-	int x,y, stepx, stepy, stepcount, ;
+	int x,y, currentx, currenty, currentcell, nextcell, stepcount, ;
 
     /* Perform random walks and calculate results: */
 		for (x=0;x<9;x++){//cyle through rows
 		printf("\n");
 			for (y=0;y<9;y++) {//cycle through cells
-				stepx = x, stepy = y;
-				
+				currentx = x, currenty = y; 
 				for (int i=0;i<1000;i++){//1000 loops per cell
-					if (island[stepx][stepy] == B){
-						randomStep(&stepx, &stepy);
-						
-					}
+					while (
+						currrentcell = island[currentx][currenty];
+						randomStep(&currentx, &currenty);
+						nextcell = island[currentx][currenty];
+						if (currentcell == B){
+							
+							
+						}
+						else if{ 
+							printf("%d",0.00)
+						}
 				}
-				else if (island[x][y] == L){
-
-				}
-				else
-					printf("%d",0.00)
-			}
 		}
-
+		}
 
     /* Print results: */
 printResults();
