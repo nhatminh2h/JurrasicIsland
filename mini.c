@@ -30,28 +30,40 @@ int main(void) {
 		{'W','L','L','L','D','L','L','L','W'},
 		{'B','B','W','B','W','B','B','W','B'}
 	};
+	double prob[NUMROWS][NUMCOLS], sd[NUMROWS][NUMCOLS];
+	
 	int x,y, currentx, currenty, currentcell, nextcell, stepcount, ;
 
     /* Perform random walks and calculate results: */
-		for (x=0;x<9;x++){//cyle through rows
-		printf("\n");
-			for (y=0;y<9;y++) {//cycle through cells
-				currentx = x, currenty = y; 
-				for (int i=0;i<1000;i++){//1000 loops per cell
-					while (
-						currrentcell = island[currentx][currenty];
-						randomStep(&currentx, &currenty);
-						nextcell = island[currentx][currenty];
-						if (currentcell == B){
-							
-							
-						}
-						else if{ 
-							printf("%d",0.00)
-						}
+	for (x=0;x<NUMROWS;x++){//cyle through rows
+	printf("\n");
+		for (y=0;y<NUMCOLS;y++) {//cycle through cells
+			for (int i=0;i<NUMWALKS;i++){//1000 loops per cell
+				currentx = x, currenty = y;
+				stepcount = 0;// reset stepcount
+				nextcell = island[currentx][currenty]; //reset nextcell
+				
+				if (status(nextcell) == 1){ 
+					prob[x][y] = 0.00f;
+					break();
 				}
+				while (status(nextcell) == 2)  {
+					currrentcell = nextcell;
+					randomStep(&currentx, &currenty);
+					if (currentx<0||currentx>NUMROWS||currenty<0||currenty>NUMCOLS){
+						nextcell = NULL;
+					}
+					else {
+						nextcell = island[currentx][currenty];
+					}
+				}
+				
+						
+				
+			}
 		}
-		}
+	}
+}
 
     /* Print results: */
 printResults();
@@ -105,9 +117,14 @@ void randomStep(int *walkX, *walkY){
 }
 int status(int *cellvalue){
 	if (*cellvalue == B||*cellvalue ==L) {
-			return 2
+			return 2;
 	}
-	else if (*cellvalue == V||
+	else if (*cellvalue == V|| *cellvalue == D||cell value==W){
+		return 1;
+	}
+	else {
+		return 0
+	}
 }
 void printResults(){
 
