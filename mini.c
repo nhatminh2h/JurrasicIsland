@@ -13,8 +13,6 @@
 #define NUMROWS	    9		/* Map size */
 #define NUMCOLS     9
 #define NUMWALKS    1000	/* Number of random walks */
-/* enter any other #defines as you deem necessary below */
-
 
 int main(void) {
 
@@ -30,36 +28,37 @@ int main(void) {
 		{'W','L','L','L','D','L','L','L','W'},
 		{'B','B','W','B','W','B','B','W','B'}
 	};
-	double prob[NUMROWS][NUMCOLS], sd[NUMROWS][NUMCOLS];
+	double prob[NUMROWS][NUMCOLS], mean[NUMROWS][NUMCOLS], sd[NUMROWS][NUMCOLS];
 	
-	int x,y, currentx, currenty, currentcell, nextcell, stepcount, ;
+	int x,y, currentx, currenty, currentcell, nextcell, stepcount, sum_sw;
 
     /* Perform random walks and calculate results: */
 	for (x=0;x<NUMROWS;x++){//cyle through rows
-	printf("\n");
-		for (y=0;y<NUMCOLS;y++) {//cycle through cells
-			for (int i=0;i<NUMWALKS;i++){//1000 loops per cell
+		for (y=0;y<(NUMCOLS-1);y++) {//cycle through cells
+			for (int i=0;i<(NUMWALKS-1);i++){//1000 loops per cell
 				currentx = x, currenty = y;
 				stepcount = 0;// reset stepcount
 				nextcell = island[currentx][currenty]; //reset nextcell
 				
-				if (status(nextcell) == 1){ 
-					prob[x][y] = 0.00f;
-					break();
-				}
-				while (status(nextcell) == 2)  {
-					currrentcell = nextcell;
-					randomStep(&currentx, &currenty);
-					if (currentx<0||currentx>NUMROWS||currenty<0||currenty>NUMCOLS){
+				while (status(nextcell) == 2)  {//start walking
+					//currrentcell = nextcell;
+					randomStep(currentx, currenty);
+					if (currentx<0||currentx>(NUMROWS-1)||currenty<0||currenty>(NUMCOLS-1)){//check if nextcell is OoB
 						nextcell = NULL;
 					}
 					else {
-						nextcell = island[currentx][currenty];
+						nextcell = island[currentx][currenty];//"walking"
 					}
+					stepcount++;
 				}
 				
-						
-				
+				if (status(nextcell) == 0) {//escape
+					prob[x][y] += 0.1;
+					sum_sw++;
+				}
+				if (status(&nextcell) == 1){//death
+					
+				}
 			}
 		}
 	}
@@ -69,13 +68,12 @@ int main(void) {
 printResults();
 
 
-
-
     return 0;
 }
 //walk function
-void randomStep(int *walkX, *walkY){
+void randomStep(int *walkX, *walkY){//need to call by reference to change variable value
 	int step = rand()%8;
+	//many cases so switch is used
 		switch (step){//direction
 			case 0://N
 			(*walkX)--;
@@ -115,18 +113,27 @@ void randomStep(int *walkX, *walkY){
 			}
 	}
 }
-int status(int *cellvalue){
-	if (*cellvalue == B||*cellvalue ==L) {
-			return 2;
-	}
-	else if (*cellvalue == V|| *cellvalue == D||cell value==W){
-		return 1;
-	}
-	else {
-		return 0
+int status(int cellvalue){//only need to call by value
+	switch (cellvalue){//using switch to keep code cleaner
+		case 'B':
+		case 'L':
+			return 2;//keep walking
+			break;
+		case 'V':
+		case 'D':
+		case 'W':
+			return 1;//death
+			break;
+		default:
+			return 0;//escape
 	}
 }
-void printResults(){
-
-
+void printResults(double *array){
+	int x,y;
+	for (x=0;x<NUMROWS;x++){//cyle through rows
+		printf("\n")
+		for (y=0;y<NUMCOLS;y++) {//cycle through cells
+			printf("%f\t", *array[x][y])
+		}
+	}
 }
