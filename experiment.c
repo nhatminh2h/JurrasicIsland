@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#define N 1000
 int walk(char a){
 	switch (a){
 		case 'B':
@@ -13,8 +14,8 @@ int walk(char a){
 }
 }
 int main(void){
-	char d = 'B';
-	int a = walk(d);
-	printf("%d",a);
-	return 0;
+	int x;
+	x += (100/N);
+	printf("%f", x);
+	
 }

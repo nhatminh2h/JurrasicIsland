@@ -9,6 +9,7 @@
 /* enter any other #includes that you deem necessary below */
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define NUMROWS	    9		/* Map size */
 #define NUMCOLS     9
@@ -32,9 +33,9 @@ int main(void) {
 		{'W','L','L','L','D','L','L','L','W'},
 		{'B','B','W','B','W','B','B','W','B'}
 	};
-	double prob[NUMROWS][NUMCOLS], mean[NUMROWS][NUMCOLS], sd[NUMROWS][NUMCOLS];
-	
-	int x,y, currentx, currenty, currentcell, nextcell, stepcount, sum_sw;
+	double prob[NUMROWS][NUMCOLS]={ 0 }, mean[NUMROWS][NUMCOLS]={ 0 }, sd[NUMROWS][NUMCOLS]={ 0 }, sum_sw, stepcount;
+	char nextcell;
+	int x,y, currentx, currenty, currentcell ;
 
     /* Perform random walks and calculate results: */
 	for (x=0;x<NUMROWS;x++){//cyle through rows
@@ -48,13 +49,11 @@ int main(void) {
 				while (status(nextcell) == 2)  {//start walking
 					//currrentcell = nextcell;
 					randomStep(&currentx, &currenty);
-					if (currentx<0||currentx>=NUMROWS||currenty<0||currenty>=NUMCOLS){//check if nextcell is OoB
+					if (currentx<0||currentx>=NUMROWS||currenty<0||currenty>=NUMCOLS){//check if nextcell is OoB 
 						nextcell = 'E';
-						
 					}
 					else {
 						nextcell = island[currentx][currenty];//"walking"
-						
 					}
 					stepcount++;
 				}
@@ -64,10 +63,15 @@ int main(void) {
 					sum_sw++;
 					mean[x][y] += stepcount;
 				}
-				if (status(nextcell) == 1){//death
-					
-				}
+				/*if (status(nextcell) == 1){//death
+					prob[x][y] += 0.00;
+				}*/
 			}
+			if (sum_sw != 0) {//avoid QNaN and INF errors caused by 0
+				mean[x][y] /= sum_sw;//divide step by successful walk
+				sd[x][y] = sqrt(
+			}
+			
 		}
 	}
 
@@ -80,6 +84,7 @@ printResults(mean);
 printf("Standard deviation step count: \n");
 printResults(sd);
     return 0;
+	
 }
 void randomStep(int *walkX, int *walkY){//need to call by reference to change variable value
 	int step = rand()%8;
@@ -115,11 +120,10 @@ void randomStep(int *walkX, int *walkY){//need to call by reference to change va
 		case 6://W
 		(*walkY)--;
 		break;
-
+		
 		case 7://NW
 		(*walkX)--;
 		(*walkY)++;
-
 	}
 }
 
@@ -143,7 +147,7 @@ void printResults(double array[NUMROWS][NUMCOLS]){
 	for (x=0;x<NUMROWS;x++){//cyle through rows
 		printf("\n");
 		for (y=0;y<NUMCOLS;y++) {//cycle through cells
-			printf("%.2f\t", array[x][y]);
+			printf("%.2lf\t", array[x][y]);
 		}
 	}
 	printf("\n\n");
