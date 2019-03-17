@@ -33,13 +33,14 @@ int main(void) {
 		{'W','L','L','L','D','L','L','L','W'},
 		{'B','B','W','B','W','B','B','W','B'}
 	};
-	double prob[NUMROWS][NUMCOLS]={ 0 }, mean[NUMROWS][NUMCOLS]={ 0 }, sd[NUMROWS][NUMCOLS]={ 0 }, sum_sw, stepcount;
+	double prob[NUMROWS][NUMCOLS]={0}, mean[NUMROWS][NUMCOLS]={0}, sd[NUMROWS][NUMCOLS]={0}, sum_sw, stepcount;
 	char nextcell;
 	int x,y, currentx, currenty, currentcell ;
-
+	srand(time(0));//seed rand
+	
     /* Perform random walks and calculate results: */
 	for (x=0;x<NUMROWS;x++){//cyle through rows
-		for (y=0;y<NUMCOLS;y++) {//cycle through cells
+		for (y=0;y<NUMCOLS;y++){//cycle through cells
 			sum_sw = 0;//reset successful walk
 			for (int i=0;i<NUMWALKS;i++){//1000 loops per cell
 				currentx = x, currenty = y;
@@ -48,20 +49,21 @@ int main(void) {
 				
 				while (status(nextcell) == 2)  {//start walking
 					//currrentcell = nextcell;
+					stepcount++;
 					randomStep(&currentx, &currenty);
-					if (currentx<0||currentx>=NUMROWS||currenty<0||currenty>=NUMCOLS){//check if nextcell is OoB 
+					if (currentx<0||currentx>=NUMROWS||currenty<0||currenty>=NUMCOLS){//check if nextcell is OoB
 						nextcell = 'E';
 					}
 					else {
 						nextcell = island[currentx][currenty];//"walking"
 					}
-					stepcount++;
 				}
-				
 				if (status(nextcell) == 0) {//escape
 					prob[x][y] += 0.1;
 					sum_sw++;
-					mean[x][y] += stepcount;
+					mean[x][y] += stepcount;//save steps to mean
+					stepcount *=stepcount;//square stepcount
+					sd[x][y] += stepcount;//add square step to sd
 				}
 				/*if (status(nextcell) == 1){//death
 					prob[x][y] += 0.00;
@@ -69,24 +71,20 @@ int main(void) {
 			}
 			if (sum_sw != 0) {//avoid QNaN and INF errors caused by 0
 				mean[x][y] /= sum_sw;//divide step by successful walk
-				sd[x][y] = sqrt(
+				sd[x][y] = sqrt((sd[x][y]/sum_sw)-(mean[x][y]*mean[x][y]));
 			}
-			
 		}
 	}
-
-
     /* Print results: */
-printf("Probability:  \n");
+printf("Probability of surviving:");
 printResults(prob);
-printf("Mean step count: \n");
+printf("Mean path length when surviving:");
 printResults(mean);
-printf("Standard deviation step count: \n");
+printf("Standard deviation of path length when surviving:");
 printResults(sd);
     return 0;
-	
 }
-void randomStep(int *walkX, int *walkY){//need to call by reference to change variable value
+void randomStep(int *walkX, int *walkY){//walk direction
 	int step = rand()%8;
 	//many cases so switch is used
 	switch (step){//direction
@@ -123,10 +121,9 @@ void randomStep(int *walkX, int *walkY){//need to call by reference to change va
 		
 		case 7://NW
 		(*walkX)--;
-		(*walkY)++;
+		(*walkY)--;
 	}
 }
-
 int status(int cellvalue){//only need to call by value
 	switch (cellvalue){//using switch to keep code cleaner
 		case 'B':
